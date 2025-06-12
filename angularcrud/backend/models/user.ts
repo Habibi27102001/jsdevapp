@@ -19,6 +19,7 @@ export const findAll = (callback: Function) => {
         datanastere: row.datanastere,
         telefon: row.telefon,
         cnp: row.cnp,
+        poza: row.poza,
         dataadaugare: row.dataadaugare,
         actiune: "",
       };
@@ -36,7 +37,6 @@ export const findOne = (userId: number, callback: Function) => {
     }
 
     const row = (<RowDataPacket>result)[0];
-    console.log(<RowDataPacket>result)
     const user: User = {
       id: row.id,
       nume: row.nume,
@@ -45,6 +45,7 @@ export const findOne = (userId: number, callback: Function) => {
       datanastere: row.datanastere,
       telefon: row.telefon,
       cnp: row.cnp,
+      poza: row.poza,
       //dataadaugare: row.dataadaugare,
     };
     callback(null, user);
@@ -53,40 +54,81 @@ export const findOne = (userId: number, callback: Function) => {
 // create user
 export const create = (user: User, callback: Function) => {
   const queryString =
-    "INSERT INTO jsusers (nume, prenume, email, datanastere, telefon, cnp) VALUES (?, ?, ?, ?, ?, ?)";
-    console.log(user);
+    "INSERT INTO jsusers (nume, prenume, email, datanastere, telefon, cnp, poza) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  console.log(user);
   db.query(
     queryString,
-    [user.nume, user.prenume, user.email, user.datanastere, user.telefon, user.cnp],
+    [
+      user.nume,
+      user.prenume,
+      user.email,
+      user.datanastere,
+      user.telefon,
+      user.cnp,
+      user.poza,
+    ],
     (err, result) => {
       if (err) {
         callback(err);
       }
-    
-      
-        const insertId = (<OkPacket>result).insertId;
-        callback(null, insertId);
-      
+
+      const insertId = (<OkPacket>result).insertId;
+      callback(null, insertId);
     }
   );
 };
 
 // update user
 export const update = (user: User, callback: Function) => {
-  const queryString = `UPDATE jsusers SET nume=?, prenume=?, email =?, telefon=?, cnp=? WHERE id=?`;
-
-  db.query(queryString, [user.nume, user.prenume, user.email, user.telefon, user.cnp, user.id], (err, result) => {
-    if (err) {
-      callback(err);
-    }
-    callback(null);
-  });
+  console.log("update user", user);
+  if (user.poza !== "undefined" && user.poza !== undefined) {
+    const queryString = `UPDATE jsusers SET nume=?, prenume=?, telefon =?, cnp=?, poza =?, datanastere=? WHERE id=?`;
+    db.query(
+      queryString,
+      [
+        user.nume,
+        user.prenume,
+        user.telefon,
+        user.cnp,
+        user.poza,
+        user.datanastere,
+        user.id,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("MySQL error:", err);
+          callback(err);
+        }
+        callback(null);
+      }
+    );
+  } else {
+    const queryString = `UPDATE jsusers SET nume=?, prenume=?, telefon =?, cnp=?, datanastere=? WHERE id=?`;
+    db.query(
+      queryString,
+      [
+        user.nume,
+        user.prenume,
+        user.telefon,
+        user.cnp,
+        user.datanastere,
+        user.id,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("MySQL error:", err);
+          callback(err);
+        }
+        callback(null);
+      }
+    );
+  }
 };
 // delete user
-export const deleteUser = (user: User, callback: Function) => {
+export const deleteUser = (id: number, callback: Function) => {
   const queryString = `DELETE FROM jsusers WHERE id=?`;
 
-  db.query(queryString, [user.id], (err, result) => {
+  db.query(queryString, [id], (err, result) => {
     if (err) {
       callback(err);
     }

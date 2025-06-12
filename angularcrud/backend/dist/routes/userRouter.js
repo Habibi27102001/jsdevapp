@@ -49,61 +49,79 @@ exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const bodyParser = __importStar(require("body-parser"));
 const userModel = __importStar(require("../models/user"));
+const path_1 = __importDefault(require("path"));
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
 var jsonParser = bodyParser.json();
 userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     userModel.findAll((err, users) => {
         if (err) {
-            return res.status(500).json({ "errorMessage": err.message });
+            return res.status(500).json({ errorMessage: err.message });
         }
-        res.status(200).json({ "data": users });
+        res.status(200).json({ data: users });
     });
 }));
 userRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = Number(req.params.id);
     userModel.findOne(userId, (err, user) => {
         if (err) {
-            return res.status(500).json({ "message": err.message });
+            return res.status(500).json({ message: err.message });
         }
-        res.status(200).json({ "data": user });
+        res.status(200).json({ data: user });
     });
 }));
 userRouter.post("/", jsonParser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
+    console.log(req.files);
+    let fileToUpload;
+    let uploadPath;
+    fileToUpload = req.files.poza; //Object is possibly 'null' or 'undefined'.
+    const newFileName = `${Date.now()}_${fileToUpload.name}`;
+    uploadPath = path_1.default.join(__dirname, "..", "/uploads/", newFileName);
+    fileToUpload.mv(uploadPath);
     const newUser = req.body;
+    newUser["poza"] = newFileName;
     userModel.create(newUser, (err, userId) => {
         if (err) {
-            return res.status(500).json({ "message": err.message });
+            return res.status(500).json({ message: err.message });
         }
-        res.status(200).json({ "userId": userId });
+        res.status(200).json({ userId: userId });
     });
 }));
 // Edit user
 userRouter.put("/:id", jsonParser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let fileToUpload;
+    let uploadPath;
     const user = req.body;
-    console.log(req.body);
+    if (req.files && req.files.poza) {
+        fileToUpload = req.files.poza; //Object is possibly 'null' or 'undefined'.
+        const newFileName = `${Date.now()}_${fileToUpload.name}`;
+        uploadPath = path_1.default.join(__dirname, "..", "/uploads/", newFileName);
+        fileToUpload.mv(uploadPath);
+        user["poza"] = newFileName;
+    }
     userModel.update(user, (err) => {
         if (err) {
-            return res.status(500).json({ "message": err.message });
+            return res.status(500).json({ message: err.message });
         }
         // res.status(200).send();
         res.status(200).json({
-            "message": 'success'
+            message: "success",
         });
     });
 }));
 // Delete user
 userRouter.delete("/:id", jsonParser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.body;
-    console.log(req.body);
-    userModel.deleteUser(user, (err) => {
+    const userId = Number(req.params.id);
+    //const user: User = req.body;
+    //console.log(req.body);
+    userModel.deleteUser(userId, (err) => {
         if (err) {
-            return res.status(500).json({ "message": err.message });
+            return res.status(500).json({ message: err.message });
         }
         // res.status(200).send();
         res.status(200).json({
-            "message": 'success'
+            message: "success",
         });
     });
 }));
