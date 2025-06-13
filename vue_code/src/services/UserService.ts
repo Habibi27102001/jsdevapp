@@ -15,9 +15,6 @@ class UserService {
   delete(id: number | string) {
     return http.delete(`/users/${id}`);
   }
-  status(id: number | string, status:number | string ) {
-    return http.put(`/users/status/${id}/${status}`);
-  }
   deleteAll() {
     return http.delete(`/users`);
   }

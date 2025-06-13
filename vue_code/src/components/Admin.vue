@@ -29,7 +29,7 @@
           :key="index"
           @click="setActiveUser(user, index)"
         >
-          {{ user.nume }}  {{ user.prenume }}
+          {{ user.nume }}
         </li>
       </ul>
       <!-- <button class="m-3 btn btn-sm btn-danger" @click="removeAllUsers">
@@ -38,15 +38,12 @@
     </div>
     <div class="col-md-6">
       <div v-if="currentUser">
-        <h4>User!!!!</h4>
+        <h4>User</h4>
         <div>
           <label><strong>Nume:</strong></label> {{ currentUser.nume }}
         </div>
         <div>
           <label><strong>Prenume:</strong></label> {{ currentUser.prenume }}
-        </div>
-         <div>
-          <label><strong>Email:</strong></label> {{ currentUser.email }}
         </div>
 
         <router-link
@@ -56,9 +53,6 @@
         >
         <button class="btn btn-danger me-2 mt-2" @click="deleteUser">
           Delete
-        </button>
-         <button class="btn btn-info me-2 mt-2" @click="statusUser">
-          Status 
         </button>
       </div>
       <div v-else>
@@ -93,16 +87,6 @@ export default {
     },
     deleteUser() {
       UserService.delete(this.currentUser.id)
-        .then((response) => {
-          console.log(response.data);
-          this.$router.push({ name: "users" });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-     statusUser() {
-      UserService.status(this.currentUser.id, this.currentUser.status)
         .then((response) => {
           console.log(response.data);
           this.$router.push({ name: "users" });

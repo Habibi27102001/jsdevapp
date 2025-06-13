@@ -13,11 +13,9 @@
       <h3>{{ currentUser.nume }} {{ currentUser.prenume }}</h3>
       <p><strong>Email:</strong> {{ currentUser.email }}</p>
       <p><strong>Telefon:</strong> {{ currentUser.telefon }}</p>
-      <p v-if="currentUser.cnp"><strong>CNP:</strong> {{ currentUser.cnp }}</p>
       <p>
         <strong>Data naștere:</strong> {{ formatDate(currentUser.datanastere) }}
       </p>
-      
     </div>
   </div>
   <div v-else>

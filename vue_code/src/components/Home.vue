@@ -24,19 +24,15 @@
     <div class="row">
       <div
         class="col-sm-3"
-        v-for="(user, index) in users.filter(u=>u.status)"
+        v-for="(user, index) in users"
         :key="index"
         @click="setActiveUser(user, index)"
-      
       >
-        <div v-if="user.status" class="card">
+        <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ user.nume }} {{ user.prenume }}</h5>
             <p class="card-text">{{ user.telefon }}</p>
             <p class="card-text">{{ formatDate(user.datanastere) }}</p>
-            <p v-if="user.cnp" class="card-text">CNP: {{ user.cnp }}</p>
-            <p v-if="user.status" class="card-text">Status: Vizibil</p>
-            <p class="card-text"> Email: {{ user.email }}</p>
             <img :src="BASE_URL + '/uploads/' + user.poza" alt="" />
             <router-link
               :to="'/userdetails/' + user.id"
